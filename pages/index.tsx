@@ -1,17 +1,14 @@
+import {useState} from 'react'
 import type { NextPage } from 'next'
-import Head from 'next/head'
-import Image from 'next/image'
-import styles from '../styles/Home.module.css'
+import Login from '../components/Login'
+import Register from '../components/Register'
 
 const Home: NextPage = () => {
-  return (
-    <div className={styles.container}>
-      <Head>
-        <title>Wise App</title>
-        <meta name="description" content="Wise App" />
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
+  const [isLogin, setIsLogin] = useState(true);
 
+  return (
+    <div>
+      { isLogin ? <Login setIsLogin={setIsLogin} /> : <Register setIsLogin={setIsLogin} /> }
     </div>
   )
 }

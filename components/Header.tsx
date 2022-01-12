@@ -1,21 +1,33 @@
-import React, { Fragment } from 'react'
+import React, { Fragment, useState, useEffect, useContext } from 'react'
 import Image from 'next/image'
 import wisePic from '../public/brand_logo_inverse.svg'
 import { Disclosure, Menu, Transition } from '@headlessui/react'
 import { MenuIcon, XIcon, UserCircleIcon } from '@heroicons/react/outline'
+import { useContextState } from '../AppContext'
+// import AppContext from '../AppContext'
 
-const navigation = [
-  { name: 'Dashboard', href: '#', current: true },
-  { name: 'Team', href: '#', current: false },
-  { name: 'Projects', href: '#', current: false },
-  { name: 'Calendar', href: '#', current: false },
-]
+interface NavigationType {
+  name: string,
+  href: string,
+  current: boolean
+}
 
 function classNames(...classes: any[]) {
   return classes.filter(Boolean).join(' ')
 }
 
 function Header() {
+  const {state} = useContextState();
+  const [navigation, setNavigation] = useState<NavigationType[]>([
+    { name: 'Dashboard', href: '#', current: true },
+    { name: 'Team', href: '#', current: false },
+    { name: 'Projects', href: '#', current: false },
+    { name: 'Calendar', href: '#', current: false },
+  ]);
+
+  // const value = useContext(AppContext);
+  // const isLoggedIn = value.state.isLoggedIn
+
   return (
     <Disclosure as="nav" className="bg-gray-800">
       {({ open }) => (
@@ -42,21 +54,26 @@ function Header() {
                   />
                 </div>
                 <div className="hidden sm:block sm:ml-6">
-                  <div className="flex space-x-4">
-                    {navigation.map((item) => (
-                      <a
-                        key={item.name}
-                        href={item.href}
-                        className={classNames(
-                          item.current ? 'bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white',
-                          'px-3 py-2 rounded-md text-sm font-medium'
-                        )}
-                        aria-current={item.current ? 'page' : undefined}
-                      >
-                        {item.name}
-                      </a>
-                    ))}
-                  </div>
+                  {
+                    state.isLoggedIn && (
+                      <div className="flex space-x-4">
+                        {navigation.map((item) => (
+                          <a
+                            key={item.name}
+                            href={item.href}
+                            className={classNames(
+                              item.current ? 'bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white',
+                              'px-3 py-2 rounded-md text-sm font-medium'
+                            )}
+                            aria-current={item.current ? 'page' : undefined}
+                          >
+                            {item.name}
+                          </a>
+                        ))}
+                      </div>
+                    )
+                  }
+                  
                 </div>
               </div>
               <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">

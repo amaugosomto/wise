@@ -2,8 +2,9 @@ import React, { Dispatch, SetStateAction } from 'react'
 import { LockClosedIcon } from '@heroicons/react/solid'
 import Image from 'next/image'
 import Head from 'next/head'
+import { IHomeProps } from '../utils/types'
 
-function Register({setIsLogin}: {setIsLogin: Dispatch<SetStateAction<boolean>>}) {
+function Register({ updateState, loading }: IHomeProps) {
   return (
     <div>
       <Head>
@@ -75,7 +76,7 @@ function Register({setIsLogin}: {setIsLogin: Dispatch<SetStateAction<boolean>>})
 
               <div className="text-sm">
                 Already have an account? {' '}
-                <a href="#" onClick={() => setIsLogin(true)} className="font-medium text-indigo-600 hover:text-indigo-500">
+                <a href="#" onClick={() => updateState('isLogin', true)} className="font-medium text-indigo-600 hover:text-indigo-500">
                   Login
                 </a>
               </div>
@@ -89,7 +90,7 @@ function Register({setIsLogin}: {setIsLogin: Dispatch<SetStateAction<boolean>>})
                 <span className="absolute left-0 inset-y-0 flex items-center pl-3">
                   <LockClosedIcon className="h-5 w-5 text-indigo-500 group-hover:text-indigo-400" aria-hidden="true" />
                 </span>
-                Register
+                {loading ? 'Loading...' : 'Register'}
               </button>
             </div>
           </form>

@@ -1,9 +1,24 @@
-import React, { Dispatch, SetStateAction } from 'react'
+import React, { FormEvent, SetStateAction } from 'react'
 import { LockClosedIcon } from '@heroicons/react/solid'
 import Image from 'next/image'
 import Head from 'next/head'
+import { IHomeProps } from '../utils/types'
+import { useToasts } from "react-toast-notifications";
 
-function Register({setIsLogin}: {setIsLogin: Dispatch<SetStateAction<boolean>>}) {
+function Register({ updateState, loading }: IHomeProps) {
+  const { addToast } = useToasts();
+
+  const register = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    updateState({loading: true});
+
+    setTimeout(() => {
+      addToast("Successfully registered!", { appearance: "success" })
+      updateState({loading : false, isLogin: true});
+      addToast("Please Login!", { appearance: "info" })
+    }, 1500);
+  }
+
   return (
     <div>
       <Head>
@@ -24,7 +39,7 @@ function Register({setIsLogin}: {setIsLogin: Dispatch<SetStateAction<boolean>>})
             </div>
             <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">Register an Account</h2>
           </div>
-          <form className="mt-8 space-y-6" action="#" method="POST">
+          <form className="mt-8 space-y-6" action="#" onSubmit={e => register(e)} method="POST">
             <input type="hidden" name="remember" defaultValue="true" />
             <div className="rounded-md shadow-sm -space-y-px">
               <div>
@@ -75,7 +90,7 @@ function Register({setIsLogin}: {setIsLogin: Dispatch<SetStateAction<boolean>>})
 
               <div className="text-sm">
                 Already have an account? {' '}
-                <a href="#" onClick={() => setIsLogin(true)} className="font-medium text-indigo-600 hover:text-indigo-500">
+                <a href="#" onClick={() => updateState({ isLogin : true })} className="font-medium text-indigo-600 hover:text-indigo-500">
                   Login
                 </a>
               </div>
@@ -84,12 +99,15 @@ function Register({setIsLogin}: {setIsLogin: Dispatch<SetStateAction<boolean>>})
             <div>
               <button
                 type="submit"
-                className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                disabled={loading}
+                className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm 
+                  font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 
+                  focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-75 disabled:cursor-not-allowed"
               >
                 <span className="absolute left-0 inset-y-0 flex items-center pl-3">
                   <LockClosedIcon className="h-5 w-5 text-indigo-500 group-hover:text-indigo-400" aria-hidden="true" />
                 </span>
-                Register
+                {loading ? 'Loading...' : 'Register'}
               </button>
             </div>
           </form>

@@ -9,5 +9,5 @@ export type AppContextType = {
 }
 
 export interface IHomeProps extends HomeStateType {
-  updateState: (key: string, value: boolean) => void
+  updateState: (data: {isLogin?: boolean, loading?: boolean}) => void
 }

@@ -10,8 +10,15 @@ const Home: NextPage = () => {
     loading: false
   });
 
-  const updateState = (key: string, value: boolean) => {
-    setIndexState({ ...indexState, [key]: value });
+  const updateState = (data: 
+    {
+      isLogin?: boolean,
+      loading?: boolean
+    } = {
+    isLogin : indexState.isLogin,
+    loading : indexState.loading
+  }) => {
+    setIndexState({ ...indexState, ...data });
   }
 
   return (

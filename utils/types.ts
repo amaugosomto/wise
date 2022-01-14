@@ -8,6 +8,12 @@ export type AppContextType = {
   setIsLoggedIn: (val: boolean) => void;
 }
 
+export type UserAccount = {
+  fullName: string,
+  email: string,
+  password: string
+}
+
 export interface IHomeProps extends HomeStateType {
   updateState: (data: {isLogin?: boolean, loading?: boolean}) => void
 }

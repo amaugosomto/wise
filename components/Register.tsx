@@ -2,14 +2,14 @@ import React, { FormEvent, useState } from 'react'
 import { LockClosedIcon } from '@heroicons/react/solid'
 import Image from 'next/image'
 import Head from 'next/head'
-import { IHomeProps } from '../utils/types'
+import { IHomeProps, UserAccount } from '../utils'
 import { useToasts } from "react-toast-notifications";
 import { GetServerSideProps } from 'next'
-import { prisma } from '../utils'
+var bcrypt = require('bcryptjs');
 
 function Register({ updateState, loading }: IHomeProps) {
   const { addToast } = useToasts();
-  const [formValues, setFormValues] = useState({
+  const [formValues, setFormValues] = useState<UserAccount>({
     fullName: '',
     email: '',
     password: ''
@@ -19,16 +19,27 @@ function Register({ updateState, loading }: IHomeProps) {
     e.preventDefault();
     updateState({loading: true});
 
-    fetch('/api/register', {
-      method: 'POST',
-      body: JSON.stringify(formValues)
-    }).then(() => {
+    var salt = bcrypt.genSaltSync(10);
+
+    const dataToSave = {...formValues, password: bcrypt.hashSync(formValues.password, salt)};
+
+    try {
+      const response = await fetch('/api/register', {
+        method: 'POST',
+        body: JSON.stringify(dataToSave)
+      })
+      
+      if (!response.ok)
+        throw new Error(response.statusText === 'Unauthorized' ? 'Email is already in use, please choose another!': response.statusText);
+      
       addToast("Successfully registered! Please Login", { appearance: "success" })
       updateState({loading : false, isLogin: true});
-    }).catch((err) => {
-      addToast(err.statusText, { appearance: 'error' })
+
+    } catch (error: any) {
+      addToast(error.message ? error.message : 'An error occured', { appearance: 'error' })
       updateState({loading : false});
-    });
+    }
+    
   }
 
   return (

@@ -13,12 +13,18 @@ function MyApp({ Component, pageProps }: AppProps) {
 
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
+  const logout = () => {
+    localStorage.removeItem('isLoggedIn');
+    setIsLoggedIn(false);
+  }
+
   return (
     <ToastProvider autoDismiss={true} autoDismissTimeout={3000}>
       <AppContext.Provider
         value={{
           state: {isLoggedIn},
-          setIsLoggedIn
+          setIsLoggedIn,
+          logout
         }}
       >
         <Layout>

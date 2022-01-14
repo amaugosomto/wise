@@ -2,7 +2,8 @@ export type {
   HomeStateType,
   AppContextType,
   UserAccount,
-  IHomeProps
+  IHomeProps,
+  LoginDetails
 }from './types'
 
 export { prisma } from './prisma'

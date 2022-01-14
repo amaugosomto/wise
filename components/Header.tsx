@@ -4,7 +4,7 @@ import wisePic from '../public/brand_logo_inverse.svg'
 import { Disclosure, Menu, Transition } from '@headlessui/react'
 import { MenuIcon, XIcon, UserCircleIcon } from '@heroicons/react/outline'
 import { useContextState } from '../AppContext'
-// import AppContext from '../AppContext'
+import Link from 'next/link'
 
 interface NavigationType {
   name: string,
@@ -17,16 +17,10 @@ function classNames(...classes: any[]) {
 }
 
 function Header() {
-  const {state} = useContextState();
+  const {state, logout} = useContextState();
   const [navigation, setNavigation] = useState<NavigationType[]>([
-    { name: 'Dashboard', href: '#', current: true },
-    { name: 'Team', href: '#', current: false },
-    { name: 'Projects', href: '#', current: false },
-    { name: 'Calendar', href: '#', current: false },
+    { name: 'Dashboard', href: '/dashboard', current: true }
   ]);
-
-  // const value = useContext(AppContext);
-  // const isLoggedIn = value.state.isLoggedIn
 
   return (
     <Disclosure as="nav" className="bg-gray-800">
@@ -58,17 +52,20 @@ function Header() {
                     state.isLoggedIn && (
                       <div className="flex space-x-4">
                         {navigation.map((item) => (
-                          <a
+                          <Link
                             key={item.name}
                             href={item.href}
-                            className={classNames(
-                              item.current ? 'bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white',
-                              'px-3 py-2 rounded-md text-sm font-medium'
-                            )}
                             aria-current={item.current ? 'page' : undefined}
                           >
-                            {item.name}
-                          </a>
+                            <a
+                              className={classNames(
+                                item.current ? 'bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white',
+                                'px-3 py-2 rounded-md text-sm font-medium'
+                              )}
+                            >
+                              {item.name}
+                            </a> 
+                          </Link>
                         ))}
                       </div>
                     )
@@ -101,26 +98,7 @@ function Header() {
                           <a
                             href="#"
                             className={classNames(active ? 'bg-gray-100' : '', 'block px-4 py-2 text-sm text-gray-700')}
-                          >
-                            Your Profile
-                          </a>
-                        )}
-                      </Menu.Item>
-                      <Menu.Item>
-                        {({ active }) => (
-                          <a
-                            href="#"
-                            className={classNames(active ? 'bg-gray-100' : '', 'block px-4 py-2 text-sm text-gray-700')}
-                          >
-                            Settings
-                          </a>
-                        )}
-                      </Menu.Item>
-                      <Menu.Item>
-                        {({ active }) => (
-                          <a
-                            href="#"
-                            className={classNames(active ? 'bg-gray-100' : '', 'block px-4 py-2 text-sm text-gray-700')}
+                            onClick={() => logout()}
                           >
                             Sign out
                           </a>

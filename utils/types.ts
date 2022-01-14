@@ -6,10 +6,16 @@ export type HomeStateType = {
 export type AppContextType = {
   state: {isLoggedIn: boolean};
   setIsLoggedIn: (val: boolean) => void;
+  logout: () => void;
 }
 
 export type UserAccount = {
   fullName: string,
+  email: string,
+  password: string
+}
+
+export type LoginDetails = {
   email: string,
   password: string
 }

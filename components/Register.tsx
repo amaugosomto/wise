@@ -1,22 +1,34 @@
-import React, { FormEvent, SetStateAction } from 'react'
+import React, { FormEvent, useState } from 'react'
 import { LockClosedIcon } from '@heroicons/react/solid'
 import Image from 'next/image'
 import Head from 'next/head'
 import { IHomeProps } from '../utils/types'
 import { useToasts } from "react-toast-notifications";
+import { GetServerSideProps } from 'next'
+import { prisma } from '../utils'
 
 function Register({ updateState, loading }: IHomeProps) {
   const { addToast } = useToasts();
+  const [formValues, setFormValues] = useState({
+    fullName: '',
+    email: '',
+    password: ''
+  })
 
-  const register = (e: FormEvent<HTMLFormElement>) => {
+  const register = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     updateState({loading: true});
 
-    setTimeout(() => {
-      addToast("Successfully registered!", { appearance: "success" })
+    fetch('/api/register', {
+      method: 'POST',
+      body: JSON.stringify(formValues)
+    }).then(() => {
+      addToast("Successfully registered! Please Login", { appearance: "success" })
       updateState({loading : false, isLogin: true});
-      addToast("Please Login!", { appearance: "info" })
-    }, 1500);
+    }).catch((err) => {
+      addToast(err.statusText, { appearance: 'error' })
+      updateState({loading : false});
+    });
   }
 
   return (
@@ -51,6 +63,8 @@ function Register({ updateState, loading }: IHomeProps) {
                   name="fullname"
                   type="text"
                   autoComplete="full-name"
+                  value={formValues.fullName}
+                  onChange={(e) => setFormValues({ ...formValues, fullName: e.target.value }) }
                   required
                   className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
                   placeholder="Full Name"
@@ -66,6 +80,8 @@ function Register({ updateState, loading }: IHomeProps) {
                   type="email"
                   autoComplete="email"
                   required
+                  value={formValues.email}
+                  onChange={(e) => setFormValues({ ...formValues, email: e.target.value }) }
                   className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
                   placeholder="Email address"
                 />
@@ -80,6 +96,9 @@ function Register({ updateState, loading }: IHomeProps) {
                   type="password"
                   autoComplete="current-password"
                   required
+                  value={formValues.password}
+                  onChange={(e) => setFormValues({ ...formValues, password: e.target.value }) }
+                  min={5}
                   className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
                   placeholder="Password"
                 />
@@ -118,3 +137,10 @@ function Register({ updateState, loading }: IHomeProps) {
 }
 
 export default Register
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  // ...
+  return {
+    props: {},
+  }
+}

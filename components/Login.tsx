@@ -1,25 +1,52 @@
-import React, { FormEvent } from 'react'
+import React, { FormEvent, useState, useEffect } from 'react'
 import { LockClosedIcon } from '@heroicons/react/solid'
 import Image from 'next/image'
 import Head from 'next/head'
 import { useContextState } from '../AppContext'
-import { IHomeProps } from '../utils/types'
+import { IHomeProps, LoginDetails } from '../utils'
 import { useRouter } from 'next/router'
+import { useToasts } from "react-toast-notifications";
 
 function Login({ updateState, loading }: IHomeProps) {
-  const { setIsLoggedIn} = useContextState();
-  const router = useRouter();
+  const { setIsLoggedIn, logout, state} = useContextState();
 
-  const login = (e: FormEvent<HTMLFormElement>) => {
+  const { addToast } = useToasts();
+  const router = useRouter();
+  const [formValues, setFormValues] = useState<LoginDetails>({
+    email: '',
+    password: ''
+  })
+
+  const login = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     updateState({ loading : true });
 
-    setTimeout(() => {
+    try {
+      const response = await fetch('/api/login', {
+        method: 'POST',
+        body: JSON.stringify(formValues)
+      })
+      
+      if (!response.ok) {
+        const errorMessage = response.status === 401 ? 'Password supplied is not valid! Please try again!' : 
+          response.status === 404 ? 'Email does not exist please register' :
+          'An Error occured';
+
+        throw new Error(errorMessage);
+      }
+      
+      addToast("Successfully loggedIn!", { appearance: "success" })
       setIsLoggedIn(true);
-      localStorage.setItem('isLoggedIn', 'true');
+      const data = await response.json();
+      localStorage.setItem('isLoggedIn', JSON.stringify(data));
       updateState({ loading : false });
       router.push('/dashboard');
-    }, 1500);
+
+    } catch (error: any) {
+      addToast(error.message ? error.message : 'An error occured', { appearance: 'error' })
+      updateState({loading : false});
+    }
+    
   }
 
   return (
@@ -55,6 +82,8 @@ function Login({ updateState, loading }: IHomeProps) {
                 type="email"
                 autoComplete="email"
                 required
+                value={formValues.email}
+                onChange={(e) => setFormValues({ ...formValues, email: e.target.value }) }
                 className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
                 placeholder="Email address"
               />
@@ -69,6 +98,8 @@ function Login({ updateState, loading }: IHomeProps) {
                 type="password"
                 autoComplete="current-password"
                 required
+                value={formValues.password}
+                onChange={(e) => setFormValues({ ...formValues, password: e.target.value }) }
                 className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
                 placeholder="Password"
               />

@@ -3,7 +3,8 @@ import { AppContextType } from "./utils";
 
 export const AppContext = React.createContext<AppContextType>({
   state: {isLoggedIn: false},
-  setIsLoggedIn: isLoggedIn => {}
+  setIsLoggedIn: () => {},
+  logout: () => {}
 });
 
 export const useContextState = () => useContext(AppContext);

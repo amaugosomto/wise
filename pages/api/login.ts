@@ -2,9 +2,9 @@ import { prisma, LoginDetails } from "../../utils";
 import type { NextApiRequest, NextApiResponse } from 'next'
 var bcrypt = require('bcryptjs');
 
-const handler = async (req: NextApiRequest, res: NextApiResponse) => {
+async function handler({ req, res }: { req: NextApiRequest; res: NextApiResponse; }): Promise<void | NextApiResponse<any>> {
   if (req.method !== 'POST') {
-    return res.status(405).json({ message: 'method not allowed' })
+    return res.status(405).json({ message: 'method not allowed' });
   }
   const loginData: LoginDetails = JSON.parse(req.body);
 
@@ -13,10 +13,12 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       email: loginData.email
     }
   });
-  if (!userExists) return res.status(404);
+  if (!userExists)
+    return res.status(404);
 
   const isCorrectPassword: boolean = bcrypt.compareSync(loginData.password, userExists.password);
-  if (!isCorrectPassword) return res.status(401);
+  if (!isCorrectPassword)
+    return res.status(401);
 
   userExists.password = "";
 

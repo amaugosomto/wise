@@ -42,7 +42,7 @@ function Login({ updateState, loading }: IHomeProps) {
       localStorage.setItem('isLoggedIn', JSON.stringify(data));
       updateState({ loading : false });
       setUser(data);
-      router.push('/dashboard');
+      router.push('/transactions');
 
     } catch (error: any) {
       addToast(error.message ? error.message : 'An error occured', { appearance: 'error' })

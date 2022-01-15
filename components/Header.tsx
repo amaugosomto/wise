@@ -19,7 +19,7 @@ function classNames(...classes: any[]) {
 function Header() {
   const {state, logout} = useContextState();
   const [navigation, setNavigation] = useState<NavigationType[]>([
-    { name: 'Dashboard', href: '/dashboard', current: true }
+    { name: 'Transactions', href: '/transactions', current: true }
   ]);
 
   return (

@@ -3,13 +3,28 @@ import { NextPage } from 'next'
 import { useContextState } from '../AppContext'
 import { useRouter } from 'next/router'
 
-const dashboard: NextPage = ({}) => {
+const Transactions: NextPage = ({}) => {
   const { state } = useContextState();
   const router = useRouter();
 
+  const user = 'ckyeecfig00518bjy3rek6xyv'
+
   useEffect(() => {
     let isLoggedIn = localStorage.getItem('isLoggedIn');
-    !isLoggedIn && router.push('/');
+    if (!isLoggedIn) router.push('/');
+
+    isLoggedIn && getTransactions();
+
+    async function getTransactions () {
+      const response = await fetch('/api/transactions', {
+        method: 'GET',
+        headers: {
+          'Authorization': state.user ? state.user.id : ''
+        }
+      })
+      
+      return response.json();
+    }
   }, [state, router])
   
   const people = [
@@ -24,6 +39,8 @@ const dashboard: NextPage = ({}) => {
     },
     // More people...
   ]
+
+  
 
   return (
     <div className="container mx-auto px-4 mt-10">
@@ -155,4 +172,4 @@ const dashboard: NextPage = ({}) => {
   )
 }
 
-export default dashboard
+export default Transactions

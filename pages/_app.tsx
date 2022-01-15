@@ -4,14 +4,21 @@ import type { AppProps } from 'next/app'
 import Layout from '../components/Layout'
 import { AppContext } from '../AppContext'
 import { ToastProvider } from "react-toast-notifications";
+import { UserAccount } from '@prisma/client'
 
 function MyApp({ Component, pageProps }: AppProps) {
   useEffect(() => {
     let isLoggedIn = localStorage.getItem('isLoggedIn');
-    isLoggedIn && setIsLoggedIn(true);
+
+    if (isLoggedIn) {
+      let userDetails: UserAccount = JSON.parse(isLoggedIn);
+      setIsLoggedIn(true);
+      setUser(userDetails);
+    }
   }, []);
 
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [user, setUser] = useState<UserAccount | undefined>(undefined);
 
   const logout = () => {
     localStorage.removeItem('isLoggedIn');
@@ -22,8 +29,12 @@ function MyApp({ Component, pageProps }: AppProps) {
     <ToastProvider autoDismiss={true} autoDismissTimeout={3000}>
       <AppContext.Provider
         value={{
-          state: {isLoggedIn},
+          state: {
+            isLoggedIn,
+            user
+          },
           setIsLoggedIn,
+          setUser,
           logout
         }}
       >

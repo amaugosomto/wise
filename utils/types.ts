@@ -1,11 +1,17 @@
+import { UserAccount as UserModel } from '@prisma/client' 
+
 export type HomeStateType = {
   isLogin: boolean,
   loading: boolean
 }
 
 export type AppContextType = {
-  state: {isLoggedIn: boolean};
+  state: {
+    isLoggedIn: boolean,
+    user? : UserModel
+  };
   setIsLoggedIn: (val: boolean) => void;
+  setUser: (val: UserModel) => void;
   logout: () => void;
 }
 

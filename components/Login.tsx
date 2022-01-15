@@ -1,4 +1,4 @@
-import React, { FormEvent, useState, useEffect } from 'react'
+import React, { FormEvent, useState } from 'react'
 import { LockClosedIcon } from '@heroicons/react/solid'
 import Image from 'next/image'
 import Head from 'next/head'
@@ -6,9 +6,10 @@ import { useContextState } from '../AppContext'
 import { IHomeProps, LoginDetails } from '../utils'
 import { useRouter } from 'next/router'
 import { useToasts } from "react-toast-notifications";
+import { UserAccount } from '@prisma/client'
 
 function Login({ updateState, loading }: IHomeProps) {
-  const { setIsLoggedIn, logout, state} = useContextState();
+  const { setIsLoggedIn, setUser} = useContextState();
 
   const { addToast } = useToasts();
   const router = useRouter();
@@ -37,9 +38,10 @@ function Login({ updateState, loading }: IHomeProps) {
       
       addToast("Successfully loggedIn!", { appearance: "success" })
       setIsLoggedIn(true);
-      const data = await response.json();
+      const data: UserAccount = await response.json();
       localStorage.setItem('isLoggedIn', JSON.stringify(data));
       updateState({ loading : false });
+      setUser(data);
       router.push('/dashboard');
 
     } catch (error: any) {

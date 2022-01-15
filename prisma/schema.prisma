@@ -26,9 +26,13 @@ model Transaction {
   user        UserAccount @relation(fields: [userId], references: [id])
   status      Status @relation(fields: [statusId], references: [id])
   wallet      Wallet? @relation(fields: [walletId], references: [id])
+  currency    Currency @relation(fields: [currencyId], references: [id])
   userId      String
   statusId    Int
   walletId    String?
+  rate        Int?
+  amount      Int
+  currencyId  Int
   created_at  DateTime @default(now())
   updated_at  DateTime @default(now())
 }
@@ -36,8 +40,10 @@ model Transaction {
 model Wallet {
   id            String @id @default(cuid())
   user          UserAccount @relation(fields: [userId], references: [id])
+  currency      Currency @relation(fields: [currencyId], references: [id])
   userId        String
   transactionId String
+  currencyId    Int
   created_at    DateTime @default(now())
   updated_at    DateTime @default(now())
   transactions  Transaction[]
@@ -47,6 +53,15 @@ model Status {
   id          Int @id @default(autoincrement())
   name        String
   transaction Transaction?
+  created_at  DateTime @default(now())
+  updated_at  DateTime @default(now())
+}
+
+model Currency {
+  id          Int @id @default(autoincrement())
+  name        String
+  transaction Transaction?
+  wallet      Wallet?
   created_at  DateTime @default(now())
   updated_at  DateTime @default(now())
 }

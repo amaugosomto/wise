@@ -1,5 +1,5 @@
 import { LoginDetails } from "../../utils";
-import { prisma } from '../../utils/prisma';
+import prisma from '../../utils/prisma';
 import type { NextApiRequest, NextApiResponse } from 'next'
 var bcrypt = require('bcryptjs');
 

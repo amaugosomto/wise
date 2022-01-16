@@ -1,5 +1,4 @@
-import { UserAccount } from "../../utils";
-import { prisma } from '../../utils/prisma';
+import prisma from '../../utils/prisma';
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { Transaction } from ".prisma/client";
 
@@ -17,7 +16,27 @@ async function handler( req: NextApiRequest, res: NextApiResponse) {
 async function forGET({ req, res }: { req: NextApiRequest; res: NextApiResponse; }): Promise<void> {
   const transactions = await prisma.transaction.findMany({
     where: {
-      userId: req.headers.authorization
+      OR: [
+        {sentById: req.headers.authorization},
+        {receivedById: req.headers.authorization},
+      ]
+    },
+    include: {
+      sentUser: {
+        select: {fullName: true}
+      },
+      receivedUser: {
+        select: {fullName: true}
+      },
+      status: {
+        select: {name: true}
+      },
+      sentCurrency: {
+        select: {name: true}
+      },
+      receivedCurrency: {
+        select: {name: true}
+      }
     }
   });
 

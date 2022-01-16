@@ -1,4 +1,10 @@
 
+import {
+  Transaction as TransactionModel,
+  Currency as CurrencyModel,
+  Status as StatusModel
+} from '.prisma/client'
+
 export type HomeStateType = {
   isLogin: boolean,
   loading: boolean
@@ -20,6 +26,12 @@ export type WalletModel = {
   amount: number
   created_at: Date
   updated_at: Date
+}
+
+export type WalletView = {
+  id: string
+  amount: number
+  currency: {name: string}
 }
 
 export type AppContextType = {
@@ -45,6 +57,25 @@ export type LoginDetails = {
 
 export interface IHomeProps extends HomeStateType {
   updateState: (data: {isLogin?: boolean, loading?: boolean}) => void
+}
+
+export type TransactionView = {
+  id: string
+  sentUser: {fullName: string} | null
+  receivedUser: {fullName: string} | null
+  status: { name: string }
+  rate: number
+  amount: number
+  sentCurrency: { name: string }
+  receivedCurrency: { name: string } | null
+  statusId: number
+  created_at: Date
+  updated_at: Date
+}
+
+export type Wallet = {
+  amount: number,
+  currency: { name: string }
 }
 
 export enum Status {

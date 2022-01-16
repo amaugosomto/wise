@@ -1,5 +1,5 @@
 import { UserAccount } from "../../utils";
-import { prisma } from '../../utils/prisma';
+import prisma from '../../utils/prisma';
 import type { NextApiRequest, NextApiResponse } from 'next'
 
 async function handler( req: NextApiRequest, res: NextApiResponse): Promise<void> {

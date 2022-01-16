@@ -5,7 +5,9 @@ export type {
   IHomeProps,
   LoginDetails,
   UserModel,
-  WalletModel
+  WalletModel,
+  TransactionView,
+  WalletView
 }from './types'
 
 export { Status, Currency } from './types'

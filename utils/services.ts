@@ -8,11 +8,11 @@ export async function setupUser(registeredUser: UserModel) {
     method: 'POST',
     body: JSON.stringify({ currencyId: 1, userId: registeredUser.id, amount: 1000 })
   });
-  const wallet2 = await fetch('/api/wallet', {
+  await fetch('/api/wallet', {
     method: 'POST',
     body: JSON.stringify({ currencyId: 2, userId: registeredUser.id, amount: 0 })
   });
-  const wallet3 = await fetch('/api/wallet', {
+  await fetch('/api/wallet', {
     method: 'POST',
     body: JSON.stringify({ currencyId: 3, userId: registeredUser.id, amount: 0 })
   });
@@ -20,12 +20,13 @@ export async function setupUser(registeredUser: UserModel) {
   const walletResponse: WalletModel = await wallet1.json();
 
   const transactionData = {
-    userId: registeredUser.id,
+    receivedById: registeredUser.id,
     statusId: Status.Received,
     walletId: walletResponse.id,
     rate: 1,
     amount: 1000,
-    currencyId: Currency.USD
+    sentCurrencyId: Currency.USD,
+    receivedCurrencyId: Currency.USD,
   }
 
   fetch('/api/transactions', {

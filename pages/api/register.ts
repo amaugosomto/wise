@@ -1,9 +1,10 @@
-import { prisma, UserAccount } from "../../utils";
+import { UserAccount } from "../../utils";
+import prisma from '../../utils/prisma';
 import type { NextApiRequest, NextApiResponse } from 'next'
 
-const handler = async (req: NextApiRequest, res: NextApiResponse) => {
+async function handler( req: NextApiRequest, res: NextApiResponse): Promise<void> {
   if (req.method !== 'POST') {
-    return res.status(405).json({ message: 'method not allowed' })
+    return res.status(405).json({ message: 'method not allowed' });
   }
   const registerData: UserAccount = JSON.parse(req.body);
 
@@ -13,8 +14,9 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     }
   });
 
-  if (userExists) return res.status(401).json({ message: 'Email Already exists' });
-  
+  if (userExists)
+    return res.status(401).json({ message: 'Email Already exists' });
+
   const savedUser = await prisma.userAccount.create({
     data: registerData
   });

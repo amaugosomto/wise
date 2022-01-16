@@ -1,10 +1,9 @@
-import React, { FormEvent, useState } from 'react'
+import React, { FormEvent, useState, useEffect } from 'react'
 import { LockClosedIcon } from '@heroicons/react/solid'
 import Image from 'next/image'
 import Head from 'next/head'
-import { IHomeProps, UserAccount } from '../utils'
+import { IHomeProps, setupUser, UserAccount } from '../utils'
 import { useToasts } from "react-toast-notifications";
-import { GetServerSideProps } from 'next'
 var bcrypt = require('bcryptjs');
 
 function Register({ updateState, loading }: IHomeProps) {
@@ -27,10 +26,13 @@ function Register({ updateState, loading }: IHomeProps) {
       const response = await fetch('/api/register', {
         method: 'POST',
         body: JSON.stringify(dataToSave)
-      })
+      });
       
       if (!response.ok)
         throw new Error(response.statusText === 'Unauthorized' ? 'Email is already in use, please choose another!': response.statusText);
+
+      const savedUser = await response.json();
+      setupUser(savedUser);
       
       addToast("Successfully registered! Please Login", { appearance: "success" })
       updateState({loading : false, isLogin: true});
@@ -148,10 +150,3 @@ function Register({ updateState, loading }: IHomeProps) {
 }
 
 export default Register
-
-export const getServerSideProps: GetServerSideProps = async (context) => {
-  // ...
-  return {
-    props: {},
-  }
-}

@@ -3,7 +3,13 @@ export type {
   AppContextType,
   UserAccount,
   IHomeProps,
-  LoginDetails
+  LoginDetails,
+  UserModel,
+  WalletModel,
+  TransactionView,
+  WalletView
 }from './types'
 
-export { prisma } from './prisma'
+export { Status, Currency } from './types'
+
+export { setupUser } from './services'

@@ -6,7 +6,6 @@ import { useContextState } from '../AppContext'
 import { IHomeProps, LoginDetails } from '../utils'
 import { useRouter } from 'next/router'
 import { useToasts } from "react-toast-notifications";
-import { UserAccount } from '@prisma/client'
 
 function Login({ updateState, loading }: IHomeProps) {
   const { setIsLoggedIn, setUser} = useContextState();
@@ -38,7 +37,7 @@ function Login({ updateState, loading }: IHomeProps) {
       
       addToast("Successfully loggedIn!", { appearance: "success" })
       setIsLoggedIn(true);
-      const data: UserAccount = await response.json();
+      const data = await response.json();
       localStorage.setItem('isLoggedIn', JSON.stringify(data));
       updateState({ loading : false });
       setUser(data);

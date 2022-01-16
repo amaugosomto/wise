@@ -1,7 +1,8 @@
-import { prisma, UserAccount } from "../../utils";
+import { UserAccount } from "../../utils";
+import { prisma } from '../../utils/prisma';
 import type { NextApiRequest, NextApiResponse } from 'next'
 
-async function handler({ req, res }: { req: NextApiRequest; res: NextApiResponse; }): Promise<void> {
+async function handler( req: NextApiRequest, res: NextApiResponse): Promise<void> {
   if (req.method !== 'POST') {
     return res.status(405).json({ message: 'method not allowed' });
   }

@@ -1,8 +1,9 @@
-import { prisma, UserAccount } from "../../utils";
+import { UserAccount } from "../../utils";
+import { prisma } from '../../utils/prisma';
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { Transaction } from ".prisma/client";
 
-async function handler({ req, res }: { req: NextApiRequest; res: NextApiResponse; }) {
+async function handler( req: NextApiRequest, res: NextApiResponse) {
   switch (req.method) {
     case "GET":
       return forGET({ req, res });
@@ -24,7 +25,7 @@ async function forGET({ req, res }: { req: NextApiRequest; res: NextApiResponse;
 }
 
 async function forPOST({ req, res }: { req: NextApiRequest; res: NextApiResponse; }): Promise<void> {
-  const data: Transaction = req.body;
+  const data: Transaction = JSON.parse(req.body);
 
   const transaction = await prisma.transaction.create({
     data

@@ -1,8 +1,25 @@
-import { UserAccount as UserModel } from '@prisma/client' 
 
 export type HomeStateType = {
   isLogin: boolean,
   loading: boolean
+}
+
+export type UserModel = {
+  id: string
+  fullName: string
+  email: string
+  password: string
+  created_at: Date
+  updated_at: Date
+}
+
+export type WalletModel = {
+  id: string
+  userId: string
+  currencyId: number
+  amount: number
+  created_at: Date
+  updated_at: Date
 }
 
 export type AppContextType = {
@@ -28,4 +45,16 @@ export type LoginDetails = {
 
 export interface IHomeProps extends HomeStateType {
   updateState: (data: {isLogin?: boolean, loading?: boolean}) => void
+}
+
+export enum Status {
+  Pending = 1,
+  Received = 2,
+  Rejected = 3
+}
+
+export enum Currency {
+  USD = 1,
+  EUR = 2,
+  NGN = 3
 }

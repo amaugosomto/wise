@@ -1,8 +1,9 @@
-import { prisma, LoginDetails } from "../../utils";
+import { LoginDetails } from "../../utils";
+import { prisma } from '../../utils/prisma';
 import type { NextApiRequest, NextApiResponse } from 'next'
 var bcrypt = require('bcryptjs');
 
-async function handler({ req, res }: { req: NextApiRequest; res: NextApiResponse; }): Promise<void | NextApiResponse<any>> {
+async function handler( req: NextApiRequest, res: NextApiResponse ): Promise<void | NextApiResponse<any>> {
   if (req.method !== 'POST') {
     return res.status(405).json({ message: 'method not allowed' });
   }

@@ -22,6 +22,13 @@ const Transactions: NextPage = ({}) => {
           'Authorization': state.user ? state.user.id : ''
         }
       })
+
+      const postTransaction = await fetch('/api/transactions', {
+        method: 'GET',
+        headers: {
+          'Authorization': state.user ? state.user.id : ''
+        }
+      })
       
       return response.json();
     }

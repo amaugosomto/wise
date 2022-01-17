@@ -4,7 +4,7 @@ import type { AppProps } from 'next/app'
 import Layout from '../components/Layout'
 import { AppContext } from '../AppContext'
 import { ToastProvider } from "react-toast-notifications";
-import { UserModel } from '../utils'
+import { UserModel, WalletView } from '../utils'
 
 function MyApp({ Component, pageProps }: AppProps) {
   useEffect(() => {
@@ -19,6 +19,7 @@ function MyApp({ Component, pageProps }: AppProps) {
 
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [user, setUser] = useState<UserModel | undefined>(undefined);
+  const [wallets, setWallets] = useState<WalletView[] | []>([]);
 
   const logout = () => {
     localStorage.removeItem('isLoggedIn');
@@ -31,11 +32,13 @@ function MyApp({ Component, pageProps }: AppProps) {
         value={{
           state: {
             isLoggedIn,
-            user
+            user,
+            wallets
           },
           setIsLoggedIn,
           setUser,
-          logout
+          logout,
+          setWallets
         }}
       >
         <Layout>

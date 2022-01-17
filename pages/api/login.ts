@@ -15,7 +15,7 @@ async function handler( req: NextApiRequest, res: NextApiResponse ): Promise<voi
     }
   });
   if (!userExists)
-    return res.status(404);
+    return res.status(404).json({message: 'email not found'});
 
   const isCorrectPassword: boolean = bcrypt.compareSync(loginData.password, userExists.password);
   if (!isCorrectPassword)

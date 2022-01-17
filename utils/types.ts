@@ -30,6 +30,7 @@ export type WalletModel = {
 
 export type WalletView = {
   id: string
+  currencyId: string
   amount: number
   currency: {name: string}
 }
@@ -37,11 +38,13 @@ export type WalletView = {
 export type AppContextType = {
   state: {
     isLoggedIn: boolean,
-    user? : UserModel
+    user? : UserModel,
+    wallets : WalletView[] | []
   };
   setIsLoggedIn: (val: boolean) => void;
   setUser: (val: UserModel) => void;
   logout: () => void;
+  setWallets: (val: WalletView[]) => void;
 }
 
 export type UserAccount = {
@@ -76,6 +79,13 @@ export type TransactionView = {
 export type Wallet = {
   amount: number,
   currency: { name: string }
+}
+
+export type NewTransactionForm = {
+  user: string
+  currency: string
+  amount: number
+  loading: boolean
 }
 
 export enum Status {

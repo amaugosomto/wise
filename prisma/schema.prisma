@@ -27,13 +27,15 @@ model Transaction {
   sentUser            UserAccount? @relation(name: "SentUser", fields: [sentById], references: [id])
   receivedUser        UserAccount? @relation(name: "ReceivedUser", fields: [receivedById], references: [id])
   status              Status      @relation(fields: [statusId], references: [id])
-  wallet              Wallet?     @relation(fields: [walletId], references: [id])
+  receivedwallet      Wallet?     @relation(name: "ReceivedWallet", fields: [receivedWalletId], references: [id])
+  sentwallet          Wallet?     @relation(name: "SentWallet", fields: [sentWalletId], references: [id])
   sentCurrency        Currency    @relation(name: "SentCurrency", fields: [sentCurrencyId], references: [id])
   receivedCurrency    Currency?   @relation(name: "ReceivedCurrency", fields: [receivedCurrencyId], references: [id])
   sentById            String?
   receivedById        String?
   statusId            Int
-  walletId            String?
+  receivedWalletId    String?
+  sentWalletId        String?
   rate                Int?
   amount              Int
   sentCurrencyId      Int
@@ -43,21 +45,22 @@ model Transaction {
 }
 
 model Wallet {
-  id            String        @id @default(cuid())
-  user          UserAccount   @relation(fields: [userId], references: [id])
-  currency      Currency      @relation(fields: [currencyId], references: [id])
-  userId        String
-  currencyId    Int
-  amount        Int
-  created_at    DateTime      @default(now())
-  updated_at    DateTime      @default(now())
-  transactions  Transaction[]
+  id              String        @id @default(cuid())
+  user            UserAccount   @relation(fields: [userId], references: [id])
+  currency        Currency      @relation(fields: [currencyId], references: [id])
+  userId          String
+  currencyId      Int
+  amount          Int
+  created_at      DateTime      @default(now())
+  updated_at      DateTime      @default(now())
+  receivedWallet  Transaction[] @relation("ReceivedWallet")
+  sentWallet      Transaction[] @relation("SentWallet")
 }
 
 model Status {
   id          Int             @id @default(autoincrement())
   name        String
-  transaction Transaction?
+  transaction Transaction[]
   created_at  DateTime        @default(now())
   updated_at  DateTime        @default(now())
 }

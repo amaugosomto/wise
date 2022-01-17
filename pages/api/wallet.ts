@@ -21,6 +21,7 @@ async function forGET({ req, res }: { req: NextApiRequest; res: NextApiResponse;
     select: {
       id: true,
       amount: true,
+      currencyId: true,
       currency: {
         select: {
           name: true

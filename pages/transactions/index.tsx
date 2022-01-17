@@ -3,19 +3,18 @@ import { NextPage } from 'next'
 import { useContextState } from '../../AppContext'
 import { useRouter } from 'next/router'
 import { TransactionView, WalletView} from '../../utils'
+import Wallet from '../../components/Wallet'
 import Link from 'next/link'
+import Head from 'next/head'
 
 const Transactions: NextPage = ({}) => {
   const { state } = useContextState();
   const router = useRouter();
   const [transactions, setTransactions] = useState<TransactionView[] | []>([]);
-  const [wallets, setWallet] = useState<WalletView[] | []>([]);
   
   useEffect(() => {
     let localState = localStorage.getItem('isLoggedIn');
     if (!localState) router.push('/');
-
-    state.isLoggedIn && getUserData();
 
     async function getUserData () {
       fetch('/api/transactions', {
@@ -28,18 +27,10 @@ const Transactions: NextPage = ({}) => {
       }).then(data => {
         setTransactions(data)
       })
-      
-      fetch('/api/wallet', {
-        method: 'GET',
-        headers: {
-          'Authorization': state.user ? state.user.id : ''
-        }
-      }).then(res => {
-        return res.json()
-      }).then(data => {
-        setWallet(data)
-      })
     }
+
+    state.isLoggedIn && getUserData();
+    
   }, [state, router])
 
   function statusClassName(statusId: number) {
@@ -54,20 +45,14 @@ const Transactions: NextPage = ({}) => {
 
   return (
     <div className="container mx-auto px-4 mt-10">
+      <Head>
+        <title>Wise App - Transaction</title>
+        <meta name="description" content="Wise App Sample App Login Page" />
+      </Head>
+
       <div className="flex flex-col">
 
-        <div className="flex justify-end">
-          {
-            wallets.map(wallet => (
-              <div className="shadow-lg p-4 rounded" key={wallet.id}>
-                <div className="flex text-md font-bold">
-                  <p className="mr-1 text-blue-400" >{wallet.currency.name} </p> :
-                  <span className="text-gray-500 ml-1">{wallet.amount}</span>
-                </div>
-              </div>
-            ))
-          }
-        </div>
+        <Wallet />
 
         <div className="flex justify-between my-5">
           <h2 className="text-3xl font-extrabold text-gray-900">Transactions</h2>

@@ -22,7 +22,7 @@ export async function setupUser(registeredUser: UserModel) {
   const transactionData = {
     receivedById: registeredUser.id,
     statusId: Status.Received,
-    walletId: walletResponse.id,
+    receivedWalletId: walletResponse.id,
     rate: 1,
     amount: 1000,
     sentCurrencyId: Currency.USD,

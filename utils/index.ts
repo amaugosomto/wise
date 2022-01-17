@@ -7,7 +7,8 @@ export type {
   UserModel,
   WalletModel,
   TransactionView,
-  WalletView
+  WalletView,
+  NewTransactionForm
 }from './types'
 
 export { Status, Currency } from './types'

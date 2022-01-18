@@ -8,7 +8,8 @@ export type {
   WalletModel,
   TransactionView,
   WalletView,
-  NewTransactionForm
+  NewTransactionForm,
+  AcceptTransactionPropsType
 }from './types'
 
 export { Status, Currency } from './types'

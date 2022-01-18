@@ -2,15 +2,29 @@ import React, { useEffect, useState } from 'react'
 import { NextPage } from 'next'
 import { useContextState } from '../../AppContext'
 import { useRouter } from 'next/router'
-import { TransactionView, WalletView} from '../../utils'
+import { AcceptTransactionPropsType, Status, TransactionView} from '../../utils'
 import Wallet from '../../components/Wallet'
 import Link from 'next/link'
 import Head from 'next/head'
+import { useToasts } from "react-toast-notifications";
+import moment from 'moment'
+import AcceptTransactionModal from '../../components/AcceptTransactionModal'
+
+const defaultAcceptTransactionProp = {
+  open: false,
+  senderName: '',
+  amount: 0,
+  currency: '',
+  transactionId: '',
+  sentWalletId: ''
+}
 
 const Transactions: NextPage = ({}) => {
-  const { state } = useContextState();
+  const { state, setWallets } = useContextState();
   const router = useRouter();
+  const { addToast } = useToasts();
   const [transactions, setTransactions] = useState<TransactionView[] | []>([]);
+  const [acceptParams, setAcceptParams] = useState<AcceptTransactionPropsType>({...defaultAcceptTransactionProp});
   
   useEffect(() => {
     let localState = localStorage.getItem('isLoggedIn');
@@ -29,9 +43,9 @@ const Transactions: NextPage = ({}) => {
       })
     }
 
-    state.isLoggedIn && getUserData();
+    state.isLoggedIn && transactions.length < 1 && getUserData();
     
-  }, [state, router])
+  }, [state, router, transactions])
 
   function statusClassName(statusId: number) {
     let defaultClasses = 'px-2 inline-flex text-xs leading-5 font-semibold rounded-full ';
@@ -41,6 +55,76 @@ const Transactions: NextPage = ({}) => {
       defaultClasses += 'bg-red-100 text-red-800'
 
     return defaultClasses;
+  }
+
+  function openAcceptModal(transaction: TransactionView) {
+    setAcceptParams({
+      ...acceptParams,
+      open: true,
+      senderName: transaction.sentUser ? transaction.sentUser.fullName : '',
+      amount: transaction.amount,
+      currency: transaction.sentCurrency.name,
+      transactionId: transaction.id,
+      sentWalletId: transaction.sentWalletId
+    })
+  }
+
+  function acceptTransaction ({currency, rate}: { currency: number, rate: number}) {
+    let amountToSave = acceptParams.amount * rate;
+    let walletId = state.wallets.find(wallet => Number.parseInt(wallet.currencyId) == currency)?.id;
+
+    let dataToSave = {
+      amountToSave,
+      wallet: walletId,
+      currency,
+      rate,
+      transactionId: acceptParams.transactionId,
+      user: state.user?.id
+    }
+
+    fetch('/api/acceptTransaction', {
+      method: 'POST',
+      body: JSON.stringify(dataToSave)
+    }).then(res => {
+      if (res.ok) {
+        addToast('Successfully accepted Transaction', {appearance: 'success'});
+        setTransactions([])
+        setWallets([])
+        return
+      }
+
+      throw new Error();
+    }).catch(() => {
+      addToast('An error occured while trying to accept transaction', {appearance: 'error'});
+    }).finally(() => 
+      setAcceptParams({...defaultAcceptTransactionProp})
+    )
+  }
+
+  function rejectTransaction ({walletId, amount}: { walletId: string, amount: number}) {
+
+    let dataToSave = {
+      walletId,
+      transactionId: acceptParams.transactionId,
+      amountToSave: amount
+    }
+
+    fetch('/api/rejectTransaction', {
+      method: 'POST',
+      body: JSON.stringify(dataToSave)
+    }).then(res => {
+      if (res.ok) {
+        addToast('Successfully rejected Transaction', {appearance: 'success'});
+        setTransactions([])
+        return
+      }
+
+      throw new Error();
+    }).catch(() => {
+      addToast('An error occured while trying to reject transaction', {appearance: 'error'});
+    }).finally(() => 
+      setAcceptParams({...defaultAcceptTransactionProp})
+    )
   }
 
   return (
@@ -97,13 +181,13 @@ const Transactions: NextPage = ({}) => {
                       scope="col"
                       className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                     >
-                      Value
+                      Currency (Received)
                     </th>
                     <th
                       scope="col"
                       className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                     >
-                      Currency (Received)
+                      Amount
                     </th>
                     <th
                       scope="col"
@@ -136,27 +220,39 @@ const Transactions: NextPage = ({}) => {
                         <div className="flex items-center">
                           <div className="ml-4">
                             <div className="text-sm font-medium text-gray-900">{transaction.sentUser?.fullName}</div>
-                            {/* <div className="text-sm text-gray-500">{person.email}</div> */}
+                            <div className="text-sm text-gray-500">{transaction.sentCurrency.name} {transaction.amount}</div>
                           </div>
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="text-sm text-gray-900">{transaction.receivedUser?.fullName}</div>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap">{transaction.amount}</td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{transaction.receivedCurrency?.name}</td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{transaction.updated_at}</td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{transaction.updated_at}</td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{transaction.rate && (transaction.amount * transaction.rate).toFixed(2)}</td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{moment(transaction.created_at).format('MMMM Do YYYY, h:mm a')}</td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{moment(transaction.updated_at).format('MMMM Do YYYY, h:mm a')}</td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                         <span className={statusClassName(transaction.statusId)}>
-                          {transaction.status.name}
+                          { transaction.statusId == Status.Pending && transaction.status.name }
+                          { 
+                            transaction.statusId == Status.Received && transaction.sentById == state.user?.id ? 'User Received' :
+                            transaction.statusId == Status.Received && transaction.receivedById == state.user?.id ? 'Accepted' : ''
+                          }
+                          { 
+                            transaction.statusId == Status.Rejected && transaction.sentById == state.user?.id ? 'User Rejected' :
+                            transaction.statusId == Status.Rejected && transaction.sentById == state.user?.id ? 'Rejected' : ''
+                          }
                         </span>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                        <a href="#" className="text-indigo-600 hover:text-indigo-900">
-                          Edit
-                        </a>
-                      </td>
+                      {
+                        (transaction.statusId == Status.Pending && transaction.receivedById == state.user?.id) && (
+                          <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                            <a href="#" onClick={() => openAcceptModal(transaction)} className="text-indigo-600 hover:text-indigo-900">
+                              Accept
+                            </a>
+                          </td>
+                        )
+                      }
                     </tr>
                   ))}
                 </tbody>
@@ -165,6 +261,13 @@ const Transactions: NextPage = ({}) => {
           </div>
         </div>
       </div>
+
+      <AcceptTransactionModal
+        state={acceptParams}
+        changeState={setAcceptParams}
+        acceptTransaction={acceptTransaction}
+        rejectTransaction={rejectTransaction}
+      />
     </div>
   )
 }

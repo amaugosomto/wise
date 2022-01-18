@@ -15,6 +15,9 @@ async function handler( req: NextApiRequest, res: NextApiResponse) {
 
 async function forGET({ req, res }: { req: NextApiRequest; res: NextApiResponse; }): Promise<void> {
   const transactions = await prisma.transaction.findMany({
+    orderBy: {
+      updated_at: 'desc'
+    },
     where: {
       OR: [
         {sentById: req.headers.authorization},
@@ -45,7 +48,8 @@ async function forGET({ req, res }: { req: NextApiRequest; res: NextApiResponse;
 
 async function forPOST({ req, res }: { req: NextApiRequest; res: NextApiResponse; }): Promise<void> {
   const data: Transaction = JSON.parse(req.body);
-
+  console.log({data})
+  
   if (data.sentWalletId) {
     // deduct from wallet
     await prisma.wallet.update({
@@ -54,18 +58,19 @@ async function forPOST({ req, res }: { req: NextApiRequest; res: NextApiResponse
       },
       data: {
         amount: {
-          decrement: data.amount
-        }
+          decrement: Number.parseFloat(data.amount.toFixed(2))
+        },
+        updated_at: new Date()
       }
     });
 
-    const transaction = await prisma.transaction.create({
-      data
-    });
-  
-    res.json(transaction);
   }
 
+  const transaction = await prisma.transaction.create({
+    data
+  });
+
+  res.json(transaction);
 }
 
 export default handler;

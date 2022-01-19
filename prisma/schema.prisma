@@ -16,7 +16,7 @@ model UserAccount {
   email         String        @unique
   password      String
   created_at    DateTime      @default(now())
-  updated_at    DateTime      @default(now())
+  updated_at    DateTime      @updatedAt
   sentUser      Transaction[] @relation("SentUser")
   receivedUser  Transaction[] @relation("ReceivedUser")
   wallets       Wallet[]
@@ -36,12 +36,12 @@ model Transaction {
   statusId            Int
   receivedWalletId    String?
   sentWalletId        String?
-  rate                Int?
-  amount              Int
+  rate                Decimal?
+  amount              Decimal
   sentCurrencyId      Int
   receivedCurrencyId  Int?
   created_at          DateTime    @default(now())
-  updated_at          DateTime    @default(now())
+  updated_at          DateTime    @updatedAt
 }
 
 model Wallet {
@@ -50,9 +50,9 @@ model Wallet {
   currency        Currency      @relation(fields: [currencyId], references: [id])
   userId          String
   currencyId      Int
-  amount          Int
+  amount          Decimal
   created_at      DateTime      @default(now())
-  updated_at      DateTime      @default(now())
+  updated_at      DateTime      @updatedAt
   receivedWallet  Transaction[] @relation("ReceivedWallet")
   sentWallet      Transaction[] @relation("SentWallet")
 }
@@ -62,7 +62,7 @@ model Status {
   name        String
   transaction Transaction[]
   created_at  DateTime        @default(now())
-  updated_at  DateTime        @default(now())
+  updated_at  DateTime        @updatedAt
 }
 
 model Currency {
@@ -72,5 +72,5 @@ model Currency {
   receivedCurrency Transaction[] @relation("ReceivedCurrency")
   wallet           Wallet[]
   created_at       DateTime      @default(now())
-  updated_at       DateTime      @default(now())
+  updated_at       DateTime      @updatedAt
 }

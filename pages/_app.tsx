@@ -22,8 +22,10 @@ function MyApp({ Component, pageProps }: AppProps) {
   const [wallets, setWallets] = useState<WalletView[] | []>([]);
 
   const logout = () => {
-    localStorage.removeItem('isLoggedIn');
     setIsLoggedIn(false);
+    localStorage.removeItem('isLoggedIn');
+    setUser(undefined);
+    setWallets([]);
   }
 
   return (

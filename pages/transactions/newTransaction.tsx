@@ -9,7 +9,7 @@ import { useToasts } from "react-toast-notifications";
 
 function NewTransaction() {
   const router = useRouter();
-  const { state } = useContextState();
+  const { state, setWallets } = useContextState();
   const { addToast } = useToasts();
 
   const [formValues, setFormValues] = useState<NewTransactionForm>({
@@ -74,6 +74,7 @@ function NewTransaction() {
           let message = `You successfully sent ${formValues.amount} ${wallet?.currency.name}`
           addToast(message, {appearance: 'success'})
           router.push('/transactions')
+          setWallets([])
         } else {
           addToast('Could not send money', {appearance: 'error'})
         }

@@ -64,6 +64,8 @@ export interface IHomeProps extends HomeStateType {
 
 export type TransactionView = {
   id: string
+  receivedById: string | null
+  sentById: string | null
   sentUser: {fullName: string} | null
   receivedUser: {fullName: string} | null
   status: { name: string }
@@ -72,6 +74,10 @@ export type TransactionView = {
   sentCurrency: { name: string }
   receivedCurrency: { name: string } | null
   statusId: number
+  sentCurrencyId: number
+  receivedCurrencyId: number | null
+  receivedWalletId: string | null
+  sentWalletId: string | null
   created_at: Date
   updated_at: Date
 }
@@ -86,6 +92,15 @@ export type NewTransactionForm = {
   currency: string
   amount: number
   loading: boolean
+}
+
+export type AcceptTransactionPropsType = {
+  open: boolean;
+  senderName: string;
+  amount: number;
+  currency: string;
+  transactionId: string;
+  sentWalletId: string | null
 }
 
 export enum Status {

@@ -22,7 +22,7 @@ function Wallet() {
     }
 
     if (state.isLoggedIn) {
-      if (wallets.length < 1) {
+      if (state.wallets.length < 1) {
         fetchWallets()
       }
     }

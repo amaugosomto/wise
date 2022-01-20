@@ -48,7 +48,6 @@ async function forGET({ req, res }: { req: NextApiRequest; res: NextApiResponse;
 
 async function forPOST({ req, res }: { req: NextApiRequest; res: NextApiResponse; }): Promise<void> {
   const data: Transaction = JSON.parse(req.body);
-  console.log({data})
   
   if (data.sentWalletId) {
     // deduct from wallet

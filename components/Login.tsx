@@ -44,6 +44,7 @@ function Login({ updateState, loading }: IHomeProps) {
       router.push('/transactions');
 
     } catch (error: any) {
+      console.log({error})
       addToast(error.message ? error.message : 'An error occured', { appearance: 'error' })
       updateState({loading : false});
     }

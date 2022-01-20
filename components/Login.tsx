@@ -57,7 +57,7 @@ function Login({ updateState, loading }: IHomeProps) {
         <meta name="description" content="Wise App Sample App Login Page" />
       </Head>
 
-      <div className="min-h-full flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+      <main data-testId="login-component" className="min-h-full flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-md w-full space-y-8">
           <div>
             <div className="text-center">
@@ -133,7 +133,7 @@ function Login({ updateState, loading }: IHomeProps) {
             </div>
           </form>
         </div>
-      </div>
+      </main>
     </div>
   )
 }

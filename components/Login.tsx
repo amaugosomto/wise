@@ -28,6 +28,7 @@ function Login({ updateState, loading }: IHomeProps) {
       })
       
       if (!response.ok) {
+        console.log({response})
         const errorMessage = response.status === 401 ? 'Password supplied is not valid! Please try again!' : 
           response.status === 404 ? 'Email does not exist please register' :
           'An Error occured';

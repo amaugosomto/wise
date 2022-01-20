@@ -1,10 +1,4 @@
 
-import {
-  Transaction as TransactionModel,
-  Currency as CurrencyModel,
-  Status as StatusModel
-} from '.prisma/client'
-
 export type HomeStateType = {
   isLogin: boolean,
   loading: boolean
